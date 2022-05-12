@@ -7,79 +7,149 @@ import (
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
 	"github.com/ahmetberke/tringle-candidate-project/internal/services"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 	"net/http"
+	"net/http/httptest"
+	"strconv"
 	"testing"
-	"time"
 )
-
-func StartServer() {
-	accountCache := cache.NewAccountCache()
-	accountService := services.NewAccountService(accountCache)
-	accountController := NewAccountController(accountService)
-
-	router := gin.Default()
-	router.POST("/account", accountController.Create)
-
-	go router.Run(":8080")
-
-	time.Sleep(time.Second)
-}
-
-type testCase struct {
-	account     *models.Account
-	isIncorrect bool
-}
 
 func TestAccountController_Create(t *testing.T) {
 
-	StartServer()
+	gin.SetMode(gin.TestMode)
 
-	testCases := []*testCase{
-		{
-			account: &models.Account{
-				CurrencyCode: "TRY",
-				OwnerName:    "Mustafa Sarigül",
-				AccountType:  "individual",
-			},
-			isIncorrect: false,
-		},
-		{
-			account: &models.Account{
-				CurrencyCode: "USDD",
-				OwnerName:    "Orkun Aydoğdu",
-				AccountType:  "individual",
-			},
-			isIncorrect: true,
-		},
-		{
-			account: &models.Account{
-				CurrencyCode: "USDD",
-				OwnerName:    "Selim İçerler",
-				AccountType:  "individ",
-			},
-			isIncorrect: true,
-		},
-	}
+	mockAccountCache := cache.NewAccountCache()
+	mockAccountService := services.NewAccountService(mockAccountCache)
+	mockAccountController := NewAccountController(mockAccountService)
 
-	for i, tCase := range testCases {
-		accountJSON, _ := json.Marshal(tCase.account)
-		resp, err := http.Post("http://localhost:8080/account", "json", bytes.NewBuffer(accountJSON))
-		if err != nil {
-			t.Errorf("%s", err.Error())
+	t.Run("Success", func(t *testing.T) {
+		mockAccountResp := &models.Account{
+			CurrencyCode: "TRY",
+			OwnerName:    "Ayşe Durmaz",
+			AccountType:  "individual",
 		}
+		rr := httptest.NewRecorder()
 
-		errSt := struct {
-			Error string `json:"error"`
-		}{
-			Error: "",
+		router := gin.Default()
+		router.POST("/account", mockAccountController.Create)
+
+		accountJSON, err := json.Marshal(mockAccountResp)
+		assert.NoError(t, err)
+
+		req, err := http.NewRequest(http.MethodPost, "/account", bytes.NewBuffer(accountJSON))
+		assert.NoError(t, err)
+
+		router.ServeHTTP(rr, req)
+
+		var incomingAccount *models.Account
+		err = json.NewDecoder(rr.Body).Decode(&incomingAccount)
+		assert.NoError(t, err)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+		assert.Equal(t, mockAccountResp.OwnerName, incomingAccount.OwnerName)
+
+	})
+
+	t.Run("NoContextAccount", func(t *testing.T) {
+		rr := httptest.NewRecorder()
+
+		router := gin.Default()
+		router.POST("/account", mockAccountController.Create)
+
+		req, err := http.NewRequest(http.MethodPost, "/account", nil)
+		assert.NoError(t, err)
+
+		router.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+
+	})
+
+	t.Run("InvalidCurrencyCode", func(t *testing.T) {
+		mockAccountResp := &models.Account{
+			CurrencyCode: "X",
+			OwnerName:    "Ayşe Durmaz",
+			AccountType:  "individual",
 		}
+		rr := httptest.NewRecorder()
 
-		json.NewDecoder(resp.Body).Decode(&errSt)
+		router := gin.Default()
+		router.POST("/account", mockAccountController.Create)
 
-		if (errSt.Error != "") != tCase.isIncorrect {
-			t.Errorf("error on %d. index, response error message : %s", i, errSt.Error)
+		accountJSON, err := json.Marshal(mockAccountResp)
+		assert.NoError(t, err)
+
+		req, err := http.NewRequest(http.MethodPost, "/account", bytes.NewBuffer(accountJSON))
+		assert.NoError(t, err)
+
+		router.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("InvalidAccountType", func(t *testing.T) {
+		mockAccountResp := &models.Account{
+			CurrencyCode: "TRY",
+			OwnerName:    "Ayşe Durmaz",
+			AccountType:  "X",
 		}
+		rr := httptest.NewRecorder()
 
-	}
+		router := gin.Default()
+		router.POST("/account", mockAccountController.Create)
 
+		accountJSON, err := json.Marshal(mockAccountResp)
+		assert.NoError(t, err)
+
+		req, err := http.NewRequest(http.MethodPost, "/account", bytes.NewBuffer(accountJSON))
+		assert.NoError(t, err)
+
+		router.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+}
+
+func TestAccountController_Get(t *testing.T) {
+
+	gin.SetMode(gin.TestMode)
+
+	mockAccountCache := cache.NewAccountCache()
+	mockAccountService := services.NewAccountService(mockAccountCache)
+	mockAccountController := NewAccountController(mockAccountService)
+
+	t.Run("Success", func(t *testing.T) {
+		mockAccountResp := &models.Account{
+			CurrencyCode: "TRY",
+			OwnerName:    "Ayşe Durmaz",
+			AccountType:  "individual",
+		}
+		mockAccountResp = mockAccountService.Create(mockAccountResp)
+
+		rr := httptest.NewRecorder()
+
+		router := gin.Default()
+		router.GET("/account/:accountNumber", mockAccountController.Get)
+
+		req, err := http.NewRequest(http.MethodGet, "/account/"+strconv.Itoa(mockAccountResp.AccountNumber), nil)
+		assert.NoError(t, err)
+
+		router.ServeHTTP(rr, req)
+
+		/*
+			b, err := io.ReadAll(rr.Body)
+			assert.NoError(t, err)
+
+			fmt.Printf("BODY : %s", string(b))
+		*/
+
+		var incomingAccount *models.Account
+
+		err = json.NewDecoder(rr.Body).Decode(&incomingAccount)
+		assert.NoError(t, err)
+
+		assert.Equal(t, mockAccountResp.AccountNumber, incomingAccount.AccountNumber)
+		assert.Equal(t, http.StatusOK, rr.Code)
+
+	})
 }
