@@ -1,24 +1,17 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"os"
+	"github.com/ahmetberke/tringle-candidate-project/configs"
+	"github.com/ahmetberke/tringle-candidate-project/internal/api"
 )
 
+func init() {
+	configs.Manager.Setup()
+}
+
 func main() {
-	router := gin.Default()
-	router.GET("/", func(context *gin.Context) {
-		context.JSON(200, gin.H{
-			"message": "hello",
-		})
-	})
-
-	PORT := os.Getenv("HTTP_PORT")
-	if PORT == "" {
-		PORT = "8080"
-	}
-
-	err := router.Run(":" + PORT)
+	app := api.NewAPI()
+	err := app.Run()
 	if err != nil {
 		panic(err)
 	}
