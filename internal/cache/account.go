@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-var lastAccountNumber int = 0
+var lastAccountNumber = 0
 
 type AccountCache struct {
 	wg       sync.WaitGroup
@@ -43,4 +43,15 @@ func (a *AccountCache) Delete(accountNumber int) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	delete(a.accounts, accountNumber)
+}
+
+func (a *AccountCache) UpdateBalance(accountNumber int, balance int) error {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	account, err := a.Get(accountNumber)
+	if err != nil {
+		return err
+	}
+	account.Balance = balance
+	return err
 }
