@@ -17,8 +17,8 @@ type hostCredentials struct {
 
 func (m *manager) Setup() {
 
-	defaultPort := "8080"
-	port := os.Getenv("HTTP_PORT")
+	defaultPort := "5000"
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}

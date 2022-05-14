@@ -12,6 +12,6 @@ COPY . ./
 
 RUN go build -o /tringle-candidate-project
 
-EXPOSE 8080
+EXPOSE 5000
 
 ENTRYPOINT [ "/tringle-candidate-project" ]
