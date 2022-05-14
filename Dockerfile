@@ -4,8 +4,6 @@ FROM golang:1.18
 
 WORKDIR /app
 
-CMD ["ping", "google.com", "-c", "1"]
-
 COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
