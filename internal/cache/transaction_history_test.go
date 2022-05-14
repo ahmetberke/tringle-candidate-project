@@ -2,6 +2,7 @@ package cache
 
 import (
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
+	"github.com/ahmetberke/tringle-candidate-project/internal/types"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -14,10 +15,10 @@ func TestNewTransactionCache(t *testing.T) {
 }
 
 func TestTransactionHistoryCache_AddAccount(t *testing.T) {
-	cache := NewTransactionCache()
 
 	t.Run("Success", func(t *testing.T) {
-		accountNumber := 1
+		cache := NewTransactionCache()
+		accountNumber := types.AccountNumber(1)
 		err := cache.AddAccount(accountNumber)
 		assert.NoError(t, err)
 		transactionHistory, err := cache.GetAll(accountNumber)
@@ -26,7 +27,8 @@ func TestTransactionHistoryCache_AddAccount(t *testing.T) {
 	})
 
 	t.Run("AlreadyExists", func(t *testing.T) {
-		accountNumber := 1
+		cache := NewTransactionCache()
+		accountNumber := types.AccountNumber(1)
 		err := cache.AddAccount(accountNumber)
 		assert.NoError(t, err)
 		err = cache.AddAccount(accountNumber)
@@ -39,7 +41,7 @@ func TestTransactionHistoryCache_Create(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		cache := NewTransactionCache()
-		accountNumber := 1
+		accountNumber := types.AccountNumber(1)
 		err := cache.AddAccount(accountNumber)
 		assert.NoError(t, err)
 

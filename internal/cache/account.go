@@ -3,26 +3,27 @@ package cache
 import (
 	"errors"
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
+	"github.com/ahmetberke/tringle-candidate-project/internal/types"
+	"math"
 	"sync"
+	"time"
 )
-
-var lastAccountNumber = 0
 
 type AccountCache struct {
 	wg       sync.WaitGroup
 	mu       sync.Mutex
-	accounts map[int]*models.Account
+	accounts map[types.AccountNumber]*models.Account
 }
 
 func NewAccountCache() *AccountCache {
 	return &AccountCache{
 		wg:       sync.WaitGroup{},
 		mu:       sync.Mutex{},
-		accounts: make(map[int]*models.Account),
+		accounts: make(map[types.AccountNumber]*models.Account),
 	}
 }
 
-func (a *AccountCache) Get(accountNumber int) (*models.Account, error) {
+func (a *AccountCache) Get(accountNumber types.AccountNumber) (*models.Account, error) {
 	account, ok := a.accounts[accountNumber]
 	if !ok {
 		return nil, errors.New("invalid account number")
@@ -34,19 +35,18 @@ func (a *AccountCache) Create(account *models.Account) *models.Account {
 	// Locks with mutex to prevent errors from concurrent access
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	lastAccountNumber++
-	account.AccountNumber = lastAccountNumber
-	a.accounts[lastAccountNumber] = account
+	account.AccountNumber = types.AccountNumber(time.Now().UnixNano())
+	a.accounts[account.AccountNumber] = account
 	return account
 }
 
-func (a *AccountCache) Delete(accountNumber int) {
+func (a *AccountCache) Delete(accountNumber types.AccountNumber) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	delete(a.accounts, accountNumber)
 }
 
-func (a *AccountCache) UpdateBalance(accountNumber int, balance int) error {
+func (a *AccountCache) UpdateBalance(accountNumber types.AccountNumber, balance float64) error {
 	// Locks with mutex to prevent errors from concurrent access
 	a.mu.Lock()
 	defer a.mu.Unlock()
@@ -54,6 +54,6 @@ func (a *AccountCache) UpdateBalance(accountNumber int, balance int) error {
 	if err != nil {
 		return err
 	}
-	account.Balance = balance
+	account.Balance = math.Round(balance*100) / 100
 	return err
 }

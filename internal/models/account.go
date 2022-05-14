@@ -5,9 +5,9 @@ import (
 )
 
 type Account struct {
-	AccountNumber int               `json:"account_number"`
-	CurrencyCode  types.Currency    `json:"currency_code"`
-	OwnerName     string            `json:"owner_name"`
-	AccountType   types.AccountType `json:"account_type"`
-	Balance       int               `json:"balance"`
+	AccountNumber types.AccountNumber `json:"account_number"`
+	CurrencyCode  types.Currency      `json:"currency_code"`
+	OwnerName     string              `json:"owner_name"`
+	AccountType   types.AccountType   `json:"account_type"`
+	Balance       float64             `json:"balance"`
 }

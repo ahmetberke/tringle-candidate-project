@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
 	"github.com/ahmetberke/tringle-candidate-project/internal/services"
+	"github.com/ahmetberke/tringle-candidate-project/internal/types"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -26,7 +27,7 @@ func (tc *TransactionController) GetTransactionHistory(c *gin.Context) {
 	}
 
 	// account number's type must be integer so string value converting to integer type
-	accountNumberI, err := strconv.Atoi(accountNumber)
+	accountNumberI, err := strconv.ParseInt(accountNumber, 10, 64)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "invalid argument",
@@ -34,7 +35,7 @@ func (tc *TransactionController) GetTransactionHistory(c *gin.Context) {
 		return
 	}
 
-	transactionHistory, err := tc.service.GetTransactionHistory(accountNumberI)
+	transactionHistory, err := tc.service.GetTransactionHistory(types.AccountNumber(accountNumberI))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

@@ -6,6 +6,7 @@ import (
 	"github.com/ahmetberke/tringle-candidate-project/internal/cache"
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
 	"github.com/ahmetberke/tringle-candidate-project/internal/services"
+	"github.com/ahmetberke/tringle-candidate-project/internal/types"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -63,6 +64,28 @@ func TestAccountController_Create(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, rr.Code)
 
+	})
+
+	t.Run("InvalidOwnerNameForIndividualAccount", func(t *testing.T) {
+		mockAccountResp := &models.Account{
+			CurrencyCode: "X",
+			OwnerName:    "Ayşe",
+			AccountType:  types.Individual,
+		}
+		rr := httptest.NewRecorder()
+
+		router := gin.Default()
+		router.POST("/account", mockAccountController.Create)
+
+		accountJSON, err := json.Marshal(mockAccountResp)
+		assert.NoError(t, err)
+
+		req, err := http.NewRequest(http.MethodPost, "/account", bytes.NewBuffer(accountJSON))
+		assert.NoError(t, err)
+
+		router.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
 	})
 
 	t.Run("InvalidCurrencyCode", func(t *testing.T) {
@@ -124,14 +147,15 @@ func TestAccountController_Get(t *testing.T) {
 			OwnerName:    "Ayşe Durmaz",
 			AccountType:  "individual",
 		}
-		mockAccountResp = mockAccountService.Create(mockAccountResp)
+		mockAccountResp, err := mockAccountService.Create(mockAccountResp)
+		assert.NoError(t, err)
 
 		rr := httptest.NewRecorder()
 
 		router := gin.Default()
 		router.GET("/account/:accountNumber", mockAccountController.Get)
 
-		req, err := http.NewRequest(http.MethodGet, "/account/"+strconv.Itoa(mockAccountResp.AccountNumber), nil)
+		req, err := http.NewRequest(http.MethodGet, "/account/"+strconv.FormatInt(int64(mockAccountResp.AccountNumber), 10), nil)
 		assert.NoError(t, err)
 
 		router.ServeHTTP(rr, req)
@@ -158,14 +182,15 @@ func TestAccountController_Get(t *testing.T) {
 			OwnerName:    "Ayşe Durmaz",
 			AccountType:  "individual",
 		}
-		mockAccountResp = mockAccountService.Create(mockAccountResp)
+		mockAccountResp, err := mockAccountService.Create(mockAccountResp)
+		assert.NoError(t, err)
 
 		rr := httptest.NewRecorder()
 
 		router := gin.Default()
 		router.GET("/account/:accountNumber", mockAccountController.Get)
 
-		req, err := http.NewRequest(http.MethodGet, "/account/"+strconv.Itoa(mockAccountResp.AccountNumber+1), nil)
+		req, err := http.NewRequest(http.MethodGet, "/account/"+strconv.FormatInt(int64(mockAccountResp.AccountNumber+1), 10), nil)
 		assert.NoError(t, err)
 
 		router.ServeHTTP(rr, req)

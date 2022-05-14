@@ -17,13 +17,6 @@ func TestAccountCache_Create(t *testing.T) {
 
 	eAccount = accountCache.Create(eAccount)
 
-	expectedANumber := 1
-	incomingANumber := eAccount.AccountNumber
-
-	if incomingANumber != expectedANumber {
-		t.Errorf("account number is %d but must be %d", incomingANumber, expectedANumber)
-	}
-
 	expectedAccount := eAccount
 	incomingAccount, err := accountCache.Get(eAccount.AccountNumber)
 	if err != nil {
@@ -84,6 +77,6 @@ func TestAccountCache_UpdateBalance(t *testing.T) {
 	assert.NoError(t, err)
 
 	aAccount, err := accountCache.Get(eAccount.AccountNumber)
-	assert.Equal(t, 200, aAccount.Balance)
+	assert.Equal(t, float64(200), aAccount.Balance)
 
 }

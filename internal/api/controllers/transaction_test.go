@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 )
 
@@ -41,7 +42,7 @@ func TestTransactionController_GetTransactionHistory(t *testing.T) {
 		router := gin.Default()
 		router.GET("/accounting/:accountNumber", mockTransactionController.GetTransactionHistory)
 
-		req, err := http.NewRequest(http.MethodGet, "/accounting/1", nil)
+		req, err := http.NewRequest(http.MethodGet, "/accounting/"+strconv.FormatInt(int64(account.AccountNumber), 10), nil)
 		assert.NoError(t, err)
 
 		router.ServeHTTP(rr, req)
@@ -411,8 +412,8 @@ func TestTransactionController_Payment(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, types.Payment, actualT.TransactionType)
-		assert.Equal(t, 400, sender.Balance)
-		assert.Equal(t, 100, receiver.Balance)
+		assert.Equal(t, float64(400), sender.Balance)
+		assert.Equal(t, float64(100), receiver.Balance)
 		assert.Equal(t, http.StatusOK, rr.Code)
 
 	})

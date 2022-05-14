@@ -1,7 +1,9 @@
 package models
 
+import "github.com/ahmetberke/tringle-candidate-project/internal/types"
+
 type Payment struct {
-	SenderAccount   int `json:"sender_account"`
-	ReceiverAccount int `json:"receiver_account"`
-	Amount          int `json:"amount"`
+	SenderAccount   types.AccountNumber `json:"sender_account"`
+	ReceiverAccount types.AccountNumber `json:"receiver_account"`
+	Amount          float64             `json:"amount"`
 }

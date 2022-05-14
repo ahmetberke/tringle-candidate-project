@@ -132,6 +132,6 @@ func (ts *TransactionService) NewWithdraw(withdraw *models.Withdraw) (*models.Tr
 
 }
 
-func (ts *TransactionService) GetTransactionHistory(accountNumber int) ([]*models.Transaction, error) {
+func (ts *TransactionService) GetTransactionHistory(accountNumber types.AccountNumber) ([]*models.Transaction, error) {
 	return ts.transactionHistoryCache.GetAll(accountNumber)
 }

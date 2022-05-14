@@ -29,7 +29,7 @@ func (ac *AccountController) Get(c *gin.Context) {
 	}
 
 	// account number's type must be integer so string value converting to integer type
-	accountNumberI, err := strconv.Atoi(accountNumber)
+	accountNumberI, err := strconv.ParseInt(accountNumber, 10, 64)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "invalid argument",
@@ -37,7 +37,7 @@ func (ac *AccountController) Get(c *gin.Context) {
 		return
 	}
 
-	account, err := ac.Service.FindByAccountNumber(accountNumberI)
+	account, err := ac.Service.FindByAccountNumber(types.AccountNumber(accountNumberI))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "account not found",
@@ -59,27 +59,13 @@ func (ac *AccountController) Create(c *gin.Context) {
 		return
 	}
 
-	// Checking valid account type
-	switch account.CurrencyCode {
-	case types.TRY, types.EUR, types.USD:
-	default:
+	account, err = ac.Service.Create(account)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid currency code",
+			"error": err.Error(),
 		})
 		return
 	}
-
-	// Checking valid account type
-	switch account.AccountType {
-	case types.Individual, types.Corporate:
-	default:
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid account type",
-		})
-		return
-	}
-
-	account = ac.Service.Create(account)
 
 	c.JSON(http.StatusOK, account)
 

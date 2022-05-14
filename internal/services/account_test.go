@@ -17,13 +17,9 @@ func TestAccountService_Create(t *testing.T) {
 		AccountType:  types.Individual,
 	}
 
-	eAccount = accountService.Create(eAccount)
-
-	expectedANumber := 1
-	incomingANumber := eAccount.AccountNumber
-
-	if incomingANumber != expectedANumber {
-		t.Errorf("account number is %d but must be %d", incomingANumber, expectedANumber)
+	eAccount, err := accountService.Create(eAccount)
+	if err != nil {
+		t.Errorf("%s", err.Error())
 	}
 
 	expectedAccount := eAccount
@@ -46,8 +42,10 @@ func TestAccountService_FindByAccountNumber(t *testing.T) {
 		OwnerName:    "Orkun Demirdağ",
 		AccountType:  types.Individual,
 	}
-	eAccount = accountService.Create(eAccount)
-
+	eAccount, err := accountService.Create(eAccount)
+	if err != nil {
+		t.Errorf("account not found")
+	}
 	expectedAccount := eAccount
 	incomingAccount, err := accountService.FindByAccountNumber(eAccount.AccountNumber)
 	if err != nil {
@@ -66,10 +64,14 @@ func TestAccountService_Delete(t *testing.T) {
 		OwnerName:    "Orkun Demirdağ",
 		AccountType:  types.Individual,
 	}
-	eAccount = accountService.Create(eAccount)
+	eAccount, err := accountService.Create(eAccount)
+	if err != nil {
+		t.Errorf("account not found")
+	}
+
 	accountCache.Delete(eAccount.AccountNumber)
 
-	_, err := accountService.FindByAccountNumber(eAccount.AccountNumber)
+	_, err = accountService.FindByAccountNumber(eAccount.AccountNumber)
 	if err == nil {
 		t.Errorf("account not deleted")
 	}

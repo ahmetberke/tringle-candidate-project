@@ -37,8 +37,8 @@ func TestTransactionService_NewPayment(t *testing.T) {
 		_, err := transactionService.NewPayment(payment)
 		assert.NoError(t, err)
 
-		assert.Equal(t, 50, account1.Balance)
-		assert.Equal(t, 450, account2.Balance)
+		assert.Equal(t, float64(50), account1.Balance)
+		assert.Equal(t, float64(450), account2.Balance)
 
 	})
 
@@ -125,7 +125,7 @@ func TestTransactionService_NewDeposit(t *testing.T) {
 		_, err := transactionService.NewDeposit(deposit)
 		assert.NoError(t, err)
 
-		assert.Equal(t, 300, account.Balance)
+		assert.Equal(t, float64(300), account.Balance)
 
 	})
 
@@ -174,7 +174,7 @@ func TestTransactionService_NewWithdraw(t *testing.T) {
 		_, err := transactionService.NewWithdraw(withdraw)
 		assert.NoError(t, err)
 
-		assert.Equal(t, 50, account.Balance)
+		assert.Equal(t, float64(50), account.Balance)
 
 	})
 
