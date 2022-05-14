@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.16-alpine
+FROM golang:1.18
 
 WORKDIR /app
+
+CMD ["ping", "google.com", "-c", "1"]
 
 COPY go.mod ./
 COPY go.sum ./
@@ -14,4 +16,4 @@ RUN go build -o /tringle-candidate-project
 
 EXPOSE 8080
 
-CMD [ "/tringle-candidate-project" ]
+ENTRYPOINT [ "/tringle-candidate-project" ]
