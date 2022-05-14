@@ -8,17 +8,20 @@ A RESTful API for payment systems with GO.
     $ git clone https://github.com/ahmetberke/tringle-candidate-project
 ```
 
-### Run With Docker
+### Build & Run With Docker
 ```
     $ docker build --tag tringle-candidate-project .
     $ docker run --publish 5000:5000 tringle-candidate-project
 ```
-### Run With Docker-Compose
+### Build & Run With Docker-Compose
 ```
     $ docker compose up -d
 ```
 
-### Run With GO
+### Build & Run With GO
+```
+    $ go mod download
+```
 ```
     $ go build -o /tringle-candidate-project
     $ ./tringle-candidate-project
