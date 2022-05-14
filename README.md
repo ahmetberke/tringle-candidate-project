@@ -45,7 +45,7 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 
 ## Folder Structure
 ```
-.             
+.
 ├── configs
 │   └── manager.go
 ├── go.mod
@@ -57,6 +57,15 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 │   │   │   ├── account.go
 │   │   │   ├── account_test.go
 │   │   │   ├── transaction.go
+│   │   │   └── transaction_test.go
+│   │   └── routes.go
+│   ├── cache
+│   │   ├── account.go
+│   │   ├── account_test.go
+│   │   ├── transaction_history.go
+│   │   └── transaction_history_test.go
+│   ├── models
+│   │   ├── account.go
 │   │   ├── deposit.go
 │   │   ├── payment.go
 │   │   ├── transaction.go
@@ -67,8 +76,7 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 │   │   ├── transaction.go
 │   │   └── transaction_test.go
 │   └── types
-│       ├── account-type.go
-│       ├── currency.go
-│       └── transaction-type.go
+│       └── types.go
 └── main.go
+
 ```
