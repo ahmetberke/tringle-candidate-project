@@ -31,6 +31,7 @@ func (a *AccountCache) Get(accountNumber int) (*models.Account, error) {
 }
 
 func (a *AccountCache) Create(account *models.Account) *models.Account {
+	// Locks with mutex to prevent errors from concurrent access
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	lastAccountNumber++
@@ -46,6 +47,7 @@ func (a *AccountCache) Delete(accountNumber int) {
 }
 
 func (a *AccountCache) UpdateBalance(accountNumber int, balance int) error {
+	// Locks with mutex to prevent errors from concurrent access
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	account, err := a.Get(accountNumber)

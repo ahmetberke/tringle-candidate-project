@@ -9,5 +9,5 @@ type Account struct {
 	CurrencyCode  types.Currency    `json:"currency_code"`
 	OwnerName     string            `json:"owner_name"`
 	AccountType   types.AccountType `json:"account_type"`
-	Balance       int               `json:"amount"`
+	Balance       int               `json:"balance"`
 }

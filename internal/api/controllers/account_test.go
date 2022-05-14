@@ -152,4 +152,38 @@ func TestAccountController_Get(t *testing.T) {
 		assert.Equal(t, http.StatusOK, rr.Code)
 
 	})
+	t.Run("AccountNotFound", func(t *testing.T) {
+		mockAccountResp := &models.Account{
+			CurrencyCode: "TRY",
+			OwnerName:    "Ayşe Durmaz",
+			AccountType:  "individual",
+		}
+		mockAccountResp = mockAccountService.Create(mockAccountResp)
+
+		rr := httptest.NewRecorder()
+
+		router := gin.Default()
+		router.GET("/account/:accountNumber", mockAccountController.Get)
+
+		req, err := http.NewRequest(http.MethodGet, "/account/"+strconv.Itoa(mockAccountResp.AccountNumber+1), nil)
+		assert.NoError(t, err)
+
+		router.ServeHTTP(rr, req)
+
+		/*
+			b, err := io.ReadAll(rr.Body)
+			assert.NoError(t, err)
+
+			fmt.Printf("BODY : %s", string(b))
+		*/
+
+		var incomingAccount *models.Account
+
+		err = json.NewDecoder(rr.Body).Decode(&incomingAccount)
+		assert.NoError(t, err)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+
+	})
+
 }

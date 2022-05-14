@@ -23,6 +23,8 @@ func NewTransactionCache() *TransactionHistoryCache {
 
 func (tc *TransactionHistoryCache) Create(transactionHistory *models.Transaction) *models.Transaction {
 	transactionHistory.CreatedAt = time.Now()
+	
+	// Locks with mutex to prevent errors from concurrent access
 	tc.mu.Lock()
 	defer tc.mu.Unlock()
 	tc.transactions[transactionHistory.AccountNumber] = append(tc.transactions[transactionHistory.AccountNumber], transactionHistory)
@@ -34,6 +36,8 @@ func (tc *TransactionHistoryCache) AddAccount(accountNumber int) error {
 	if ok {
 		return errors.New("this account already has transaction history")
 	}
+
+	// Locks with mutex to prevent errors from concurrent access
 	tc.mu.Lock()
 	defer tc.mu.Unlock()
 	tc.transactions[accountNumber] = []*models.Transaction{}
@@ -42,6 +46,7 @@ func (tc *TransactionHistoryCache) AddAccount(accountNumber int) error {
 
 func (tc *TransactionHistoryCache) GetAll(accountNumber int) ([]*models.Transaction, error) {
 	accounts, ok := tc.transactions[accountNumber]
+
 	if !ok {
 		return nil, errors.New("this account has no transaction history")
 	}

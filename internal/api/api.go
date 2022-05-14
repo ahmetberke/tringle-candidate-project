@@ -21,15 +21,19 @@ func NewAPI() *api {
 
 	// Creating cache layers
 	accountCache := cache.NewAccountCache()
+	transactionCache := cache.NewTransactionCache()
 
 	// Creating services
 	accountService := services.NewAccountService(accountCache)
+	transactionService := services.NewTransactionService(accountCache, transactionCache)
 
 	// Creating controllers
 	accountController := controllers.NewAccountController(accountService)
+	transactionController := controllers.NewTransactionController(transactionService)
 
 	// Initializing routes
 	a.AccountRoutesInitialize(accountController)
+	a.TransactionRoutesInitialize(transactionController)
 
 	return a
 }
