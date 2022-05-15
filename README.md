@@ -17,6 +17,11 @@ A RESTful API for payment systems with GO.
 ```
     $ docker compose up -d
 ```
+How to whatch logs in docker?
+```
+    $ docker ps
+    $ docker logs <container_name>
+```
 
 ### Build & Run With GO
 ```
