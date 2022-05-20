@@ -6,14 +6,14 @@ A RESTful API for payment systems with GO.
 
 - click on endpoint to go to details 
 
-| Endpoint                                     | Method |
-|----------------------------------------------|--------|
-| [/account](#Account Endpoint)                | POST   |
-| [/account/:accountNumber](#Account Endpoint) | GET    |
-| /payment                                     | POST   |
-| /deposit                                     | POST   |
-| /withdraw                                    | POST   |
-| /accounting/:accountNumber                   | GET    |
+| Endpoint                                                    | Method |
+|-------------------------------------------------------------|--------|
+| [/account](#account-endpoint)                               | POST   |
+| [/account/:accountNumber](#account-endpoint)                | GET    |
+| [/payment](#payment-endpoint)                               | POST   |
+| [/deposit](#deposit-endpoint)                               | POST   |
+| [/withdraw](#withdraw-endpoint)                             | POST   |
+| [/accounting/:accountNumber](#transaction-history-endpoint) | GET    |
 
 
 ## Installation & Run
@@ -101,18 +101,21 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 ```
 
 
-#Account Endpoint
+# Account Endpoint
 
 *Request body*
-```json lines
+
+```
 {
   "ownerName": string,
   "currencyCode": {enum: ["TRY", "USD", "EUR"]},
   "accountType": {enum: ["individual", "corporate"]}
 }
 ```
+
 *Response*
-```json lines
+
+```
 {
   "accountNumber" : number,
   "ownerName" : string,
@@ -123,7 +126,7 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 ```
 
 
-#Payment Endpoint
+# Payment Endpoint
 
 *Request body*
 
@@ -147,7 +150,7 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 ```
 
 
-#Deposit Endpoint
+# Deposit Endpoint
 
 *Request body*
 
@@ -170,7 +173,7 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 ```
 
 
-#Withdraw Endpoint
+# Withdraw Endpoint
 
 *Request body*
 
@@ -193,7 +196,7 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 ```
 
 
-#Transaction History Endpoint
+# Transaction History Endpoint
 
 *Response*
 
