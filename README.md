@@ -2,6 +2,20 @@
 
 A RESTful API for payment systems with GO.
 
+## Allowed Endpoints and Methods
+
+- click on endpoint to go to details 
+
+| Endpoint                                     | Method |
+|----------------------------------------------|--------|
+| [/account](#Account Endpoint)                | POST   |
+| [/account/:accountNumber](#Account Endpoint) | GET    |
+| /payment                                     | POST   |
+| /deposit                                     | POST   |
+| /withdraw                                    | POST   |
+| /accounting/:accountNumber                   | GET    |
+
+
 ## Installation & Run
 ### Download
 ```
@@ -84,4 +98,52 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 │       └── types.go
 └── main.go
 
+```
+
+#Account Endpoint
+## Request Body
+```json
+"ownerName" : string,
+"currencyCode" : {enum : ["TRY", "USD", "EUR"]},
+"accountType" : {enum : ["individual", "corporate"]}
+```
+## Response
+```json
+"accountNumber" : number
+"ownerName" : string,
+"currencyCode" : {enum : ["TRY", "USD", "EUR"]},
+"accountType" : {enum : ["individual", "corporate"]}
+"balance" : number
+```
+
+#Payment Endpoint
+## Request Body
+```json
+"senderAccount" : number,
+"receiverAccount" : number,
+"amount" : number
+```
+## Response
+[transaction](#Transaction)
+
+#Withdraw Endpoint
+## Request Body
+```json
+{
+  "accountNumber": number,
+  "amount": number
+}
+```
+## Response
+[transaction](#Transaction)
+
+#Transaction History Endpoint
+## Response
+```json
+{
+  "accountNumber" : number,
+  "amount" :  number,
+  "transactionType" : { enum: ["payment", "deposit", "withdraw"] },
+  "created"
+}
 ```

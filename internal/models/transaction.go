@@ -17,7 +17,7 @@ type TransactionDTO struct {
 	AccountNumber   types.AccountNumber   `json:"accountNumber"`
 	Amount          float64               `json:"amount"`
 	TransactionType types.TransactionType `json:"transactionType"`
-	CreatedAt       int64                 `json:"createdAt"`
+	CreatedAt       time.Time             `json:"createdAt"`
 }
 
 func (t *Transaction) DTO() *TransactionDTO {
@@ -28,7 +28,7 @@ func (t *Transaction) DTO() *TransactionDTO {
 		AccountNumber:   t.AccountNumber,
 		Amount:          amountF,
 		TransactionType: t.TransactionType,
-		CreatedAt:       t.CreatedAt.Unix(),
+		CreatedAt:       t.CreatedAt,
 	}
 }
 
@@ -37,6 +37,6 @@ func (td *TransactionDTO) Normal() *Transaction {
 		AccountNumber:   td.AccountNumber,
 		Amount:          decimal.NewFromFloat(td.Amount),
 		TransactionType: td.TransactionType,
-		CreatedAt:       time.Unix(td.CreatedAt, 0),
+		CreatedAt:       td.CreatedAt,
 	}
 }
