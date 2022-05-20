@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
-	"github.com/ahmetberke/tringle-candidate-project/internal/services"
 	"github.com/ahmetberke/tringle-candidate-project/internal/types"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -10,12 +9,18 @@ import (
 )
 
 type AccountController struct {
-	Service *services.AccountService
+	service accountService
 }
 
-func NewAccountController(service *services.AccountService) *AccountController {
+type accountService interface {
+	FindByAccountNumber(accountNumber types.AccountNumber) (*models.Account, error)
+	Create(account *models.Account) (*models.Account, error)
+	Delete(accountNumber types.AccountNumber)
+}
+
+func NewAccountController(s accountService) *AccountController {
 	return &AccountController{
-		Service: service,
+		service: s,
 	}
 }
 
@@ -37,7 +42,7 @@ func (ac *AccountController) Get(c *gin.Context) {
 		return
 	}
 
-	account, err := ac.Service.FindByAccountNumber(types.AccountNumber(accountNumberI))
+	account, err := ac.service.FindByAccountNumber(types.AccountNumber(accountNumberI))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "account not found",
@@ -45,13 +50,21 @@ func (ac *AccountController) Get(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, account)
+	accountDTO := account.DTO()
+	if accountDTO == nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "something is wrong",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, accountDTO)
 	return
 }
 
 func (ac *AccountController) Create(c *gin.Context) {
-	var account *models.Account
-	err := c.BindJSON(&account)
+	var accountDTO *models.AccountDTO
+	err := c.BindJSON(&accountDTO)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "cannot bind json",
@@ -59,7 +72,9 @@ func (ac *AccountController) Create(c *gin.Context) {
 		return
 	}
 
-	account, err = ac.Service.Create(account)
+	account := accountDTO.Normal()
+
+	account, err = ac.service.Create(account)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -67,7 +82,14 @@ func (ac *AccountController) Create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, account)
+	respAccountDTO := account.DTO()
+	if respAccountDTO == nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "something is wrong",
+		})
+	}
+
+	c.JSON(http.StatusCreated, respAccountDTO)
 
 	return
 }

@@ -8,6 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// this struct has a PORT for custom host setting
+// and it has a router that distributes the routes to the relevant controllers
+// the server is run through this router
 type api struct {
 	PORT   string
 	Router *gin.Engine
@@ -38,6 +41,7 @@ func NewAPI() *api {
 	return a
 }
 
+// Run starts the server with the port set in the api
 func (a *api) Run() error {
 	err := a.Router.Run(a.PORT)
 	if err != nil {

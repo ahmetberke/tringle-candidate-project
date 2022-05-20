@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
-	"github.com/ahmetberke/tringle-candidate-project/internal/services"
 	"github.com/ahmetberke/tringle-candidate-project/internal/types"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -10,11 +9,18 @@ import (
 )
 
 type TransactionController struct {
-	service *services.TransactionService
+	service transactionService
 }
 
-func NewTransactionController(service *services.TransactionService) *TransactionController {
-	return &TransactionController{service: service}
+type transactionService interface {
+	NewPayment(payment *models.Payment) (*models.Transaction, error)
+	NewDeposit(deposit *models.Deposit) (*models.Transaction, error)
+	NewWithdraw(withdraw *models.Withdraw) (*models.Transaction, error)
+	GetTransactionHistory(accountNumber types.AccountNumber) ([]*models.Transaction, error)
+}
+
+func NewTransactionController(s transactionService) *TransactionController {
+	return &TransactionController{service: s}
 }
 
 func (tc *TransactionController) GetTransactionHistory(c *gin.Context) {
@@ -43,20 +49,27 @@ func (tc *TransactionController) GetTransactionHistory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, transactionHistory)
+	var transactionHistoryDTO []*models.TransactionDTO
+	for _, t := range transactionHistory {
+		transactionHistoryDTO = append(transactionHistoryDTO, t.DTO())
+	}
+
+	c.JSON(http.StatusOK, transactionHistoryDTO)
 	return
 
 }
 
 func (tc *TransactionController) Payment(c *gin.Context) {
-	var payment *models.Payment
-	err := c.BindJSON(&payment)
+	var paymentDTO *models.PaymentDTO
+	err := c.BindJSON(&paymentDTO)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "cannot bind json",
 		})
 		return
 	}
+
+	payment := paymentDTO.Normal()
 
 	transaction, err := tc.service.NewPayment(payment)
 	if err != nil {
@@ -66,19 +79,23 @@ func (tc *TransactionController) Payment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, transaction)
+	transactionDTO := transaction.DTO()
+
+	c.JSON(http.StatusOK, transactionDTO)
 	return
 }
 
 func (tc *TransactionController) Deposit(c *gin.Context) {
-	var deposit *models.Deposit
-	err := c.BindJSON(&deposit)
+	var depositDTO *models.DepositDTO
+	err := c.BindJSON(&depositDTO)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "cannot bind json",
 		})
 		return
 	}
+
+	deposit := depositDTO.Normal()
 
 	transaction, err := tc.service.NewDeposit(deposit)
 	if err != nil {
@@ -88,19 +105,29 @@ func (tc *TransactionController) Deposit(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, transaction)
+	transactionDTO := transaction.DTO()
+	if transactionDTO == nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "something is wrong",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, transactionDTO)
 	return
 }
 
 func (tc *TransactionController) Withdraw(c *gin.Context) {
-	var withdraw *models.Withdraw
-	err := c.BindJSON(&withdraw)
+	var withdrawDTO *models.WithdrawDTO
+	err := c.BindJSON(&withdrawDTO)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "cannot bind json",
 		})
 		return
 	}
+
+	withdraw := withdrawDTO.Normal()
 
 	transaction, err := tc.service.NewWithdraw(withdraw)
 	if err != nil {
@@ -110,6 +137,8 @@ func (tc *TransactionController) Withdraw(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, transaction)
+	transactionDTO := transaction.DTO()
+
+	c.JSON(http.StatusOK, transactionDTO)
 	return
 }

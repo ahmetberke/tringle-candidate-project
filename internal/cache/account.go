@@ -4,20 +4,19 @@ import (
 	"errors"
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
 	"github.com/ahmetberke/tringle-candidate-project/internal/types"
-	"math"
+	"github.com/shopspring/decimal"
 	"sync"
-	"time"
 )
 
+var lastAccountNumber = 0
+
 type AccountCache struct {
-	wg       sync.WaitGroup
 	mu       sync.Mutex
 	accounts map[types.AccountNumber]*models.Account
 }
 
 func NewAccountCache() *AccountCache {
 	return &AccountCache{
-		wg:       sync.WaitGroup{},
 		mu:       sync.Mutex{},
 		accounts: make(map[types.AccountNumber]*models.Account),
 	}
@@ -35,7 +34,8 @@ func (a *AccountCache) Create(account *models.Account) *models.Account {
 	// Locks with mutex to prevent errors from concurrent access
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	account.AccountNumber = types.AccountNumber(time.Now().UnixNano())
+	lastAccountNumber++
+	account.AccountNumber = types.AccountNumber(lastAccountNumber)
 	a.accounts[account.AccountNumber] = account
 	return account
 }
@@ -46,7 +46,7 @@ func (a *AccountCache) Delete(accountNumber types.AccountNumber) {
 	delete(a.accounts, accountNumber)
 }
 
-func (a *AccountCache) UpdateBalance(accountNumber types.AccountNumber, balance float64) error {
+func (a *AccountCache) UpdateBalance(accountNumber types.AccountNumber, balance decimal.Decimal) error {
 	// Locks with mutex to prevent errors from concurrent access
 	a.mu.Lock()
 	defer a.mu.Unlock()
@@ -54,6 +54,6 @@ func (a *AccountCache) UpdateBalance(accountNumber types.AccountNumber, balance 
 	if err != nil {
 		return err
 	}
-	account.Balance = math.Round(balance*100) / 100
+	account.Balance = balance
 	return err
 }

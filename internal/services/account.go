@@ -5,11 +5,19 @@ import (
 	"github.com/ahmetberke/tringle-candidate-project/internal/cache"
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
 	"github.com/ahmetberke/tringle-candidate-project/internal/types"
+	"github.com/shopspring/decimal"
 	"strings"
 )
 
 type AccountService struct {
-	Cache *cache.AccountCache
+	Cache accountCache
+}
+
+type accountCache interface {
+	Get(accountNumber types.AccountNumber) (*models.Account, error)
+	Create(account *models.Account) *models.Account
+	Delete(accountNumber types.AccountNumber)
+	UpdateBalance(accountNumber types.AccountNumber, balance decimal.Decimal) error
 }
 
 func NewAccountService(cache *cache.AccountCache) *AccountService {

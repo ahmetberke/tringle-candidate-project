@@ -2,8 +2,9 @@ package api
 
 import "github.com/ahmetberke/tringle-candidate-project/internal/api/controllers"
 
+// AccountRoutesInitialize takes the AccountController as a parameter
+// and implements the relevant handlers to the account routes.
 func (a *api) AccountRoutesInitialize(c *controllers.AccountController) {
-	// implementing account routes
 	ag := a.Router.Group("/account")
 	{
 		ag.POST("/", c.Create)
@@ -11,8 +12,9 @@ func (a *api) AccountRoutesInitialize(c *controllers.AccountController) {
 	}
 }
 
+// TransactionRoutesInitialize takes the TransactionController as a parameter
+// and implements the relevant handlers to the transaction routes.
 func (a *api) TransactionRoutesInitialize(c *controllers.TransactionController) {
-	// implementing account routes
 	a.Router.POST("/payment", c.Payment)
 	a.Router.POST("/deposit", c.Deposit)
 	a.Router.POST("/withdraw", c.Withdraw)
