@@ -100,7 +100,9 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 
 ```
 
+
 #Account Endpoint
+
 *Request body*
 ```json lines
 {
@@ -120,17 +122,22 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 }
 ```
 
+
 #Payment Endpoint
+
 *Request body*
-```json lines
+
+```
 {
   "senderAccount" : number,
   "receiverAccount" : number,
   "amount" : number
 }
 ```
+
 *Response*
-```json lines
+
+```
 {
   "accountNumber" : number,
   "amount" :  number,
@@ -139,16 +146,21 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 }
 ```
 
+
 #Deposit Endpoint
+
 *Request body*
-```json lines
+
+```
 {
   "accountNumber": number,
   "amount": number
 }
 ```
+
 *Response*
-```json lines
+
+```
 {
   "accountNumber" : number,
   "amount" :  number,
@@ -157,16 +169,21 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 }
 ```
 
+
 #Withdraw Endpoint
+
 *Request body*
-```json lines
+
+```
 {
   "accountNumber": number,
   "amount": number
 }
 ```
+
 *Response*
-```json lines
+
+```
 {
   "accountNumber" : number,
   "amount" :  number,
@@ -175,9 +192,12 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 }
 ```
 
+
 #Transaction History Endpoint
+
 *Response*
-```json lines
+
+```
 {
   "accountNumber" : number,
   "amount" :  number,
