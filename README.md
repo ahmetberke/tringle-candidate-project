@@ -101,49 +101,87 @@ click [here](https://tringle-payment-rest-api.herokuapp.com/) to go
 ```
 
 #Account Endpoint
-## Request Body
+*Request body*
 ```json
-"ownerName" : string,
-"currencyCode" : {enum : ["TRY", "USD", "EUR"]},
-"accountType" : {enum : ["individual", "corporate"]}
+{
+  "ownerName": string,
+  "currencyCode": {enum: ["TRY", "USD", "EUR"]},
+  "accountType": {enum: ["individual", "corporate"]}
+}
 ```
-## Response
+*Response*
 ```json
-"accountNumber" : number
-"ownerName" : string,
-"currencyCode" : {enum : ["TRY", "USD", "EUR"]},
-"accountType" : {enum : ["individual", "corporate"]}
-"balance" : number
+{
+  "accountNumber" : number
+  "ownerName" : string,
+  "currencyCode" : {enum : ["TRY", "USD", "EUR"]},
+  "accountType" : {enum : ["individual", "corporate"]}
+  "balance" : number
+}
 ```
 
 #Payment Endpoint
-## Request Body
+*Request body*
 ```json
-"senderAccount" : number,
-"receiverAccount" : number,
-"amount" : number
+{
+  "senderAccount" : number,
+  "receiverAccount" : number,
+  "amount" : number
+}
 ```
-## Response
-[transaction](#Transaction)
+*Response*
+```json
+{
+  "accountNumber" : number,
+  "amount" :  number,
+  "transactionType" : "payment",
+  "createdAt" : date
+}
+```
 
-#Withdraw Endpoint
-## Request Body
+#Deposit Endpoint
+*Request body*
 ```json
 {
   "accountNumber": number,
   "amount": number
 }
 ```
-## Response
-[transaction](#Transaction)
+*Response*
+```json
+{
+  "accountNumber" : number,
+  "amount" :  number,
+  "transactionType" : "deposit",
+  "createdAt" : date
+}
+```
+
+#Withdraw Endpoint
+*Request body*
+```json
+{
+  "accountNumber": number,
+  "amount": number
+}
+```
+*Response*
+```json
+{
+  "accountNumber" : number,
+  "amount" :  number,
+  "transactionType" : "withdraw",
+  "createdAt" : date
+}
+```
 
 #Transaction History Endpoint
-## Response
+*Response*
 ```json
 {
   "accountNumber" : number,
   "amount" :  number,
   "transactionType" : { enum: ["payment", "deposit", "withdraw"] },
-  "created"
+  "createdAt" : date
 }
 ```
