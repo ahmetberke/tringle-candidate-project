@@ -7,17 +7,17 @@ import (
 )
 
 type Transaction struct {
-	AccountNumber   types.AccountNumber   `json:"account_number"`
-	Amount          decimal.Decimal       `json:"amount"`
-	TransactionType types.TransactionType `json:"transaction_type"`
-	CreatedAt       time.Time             `json:"created_at"`
+	AccountNumber   types.AccountNumber
+	Amount          decimal.Decimal
+	TransactionType types.TransactionType
+	CreatedAt       time.Time
 }
 
 type TransactionDTO struct {
-	AccountNumber   types.AccountNumber   `json:"account_number"`
+	AccountNumber   types.AccountNumber   `json:"accountNumber"`
 	Amount          float64               `json:"amount"`
-	TransactionType types.TransactionType `json:"transaction_type"`
-	CreatedAt       int64                 `json:"created_at"`
+	TransactionType types.TransactionType `json:"transactionType"`
+	CreatedAt       int64                 `json:"createdAt"`
 }
 
 func (t *Transaction) DTO() *TransactionDTO {

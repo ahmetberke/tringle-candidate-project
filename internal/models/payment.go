@@ -6,14 +6,14 @@ import (
 )
 
 type Payment struct {
-	SenderAccount   types.AccountNumber `json:"sender_account"`
-	ReceiverAccount types.AccountNumber `json:"receiver_account"`
-	Amount          decimal.Decimal     `json:"amount"`
+	SenderAccount   types.AccountNumber
+	ReceiverAccount types.AccountNumber
+	Amount          decimal.Decimal
 }
 
 type PaymentDTO struct {
-	SenderAccount   types.AccountNumber `json:"sender_account"`
-	ReceiverAccount types.AccountNumber `json:"receiver_account"`
+	SenderAccount   types.AccountNumber `json:"senderAccount"`
+	ReceiverAccount types.AccountNumber `json:"receiverAccount"`
 	Amount          float64             `json:"amount"`
 }
 

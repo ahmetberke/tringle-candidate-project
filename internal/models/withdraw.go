@@ -6,12 +6,12 @@ import (
 )
 
 type Withdraw struct {
-	AccountNumber types.AccountNumber `json:"account_number"`
-	Amount        decimal.Decimal     `json:"amount"`
+	AccountNumber types.AccountNumber
+	Amount        decimal.Decimal
 }
 
 type WithdrawDTO struct {
-	AccountNumber types.AccountNumber `json:"account_number"`
+	AccountNumber types.AccountNumber `json:"accountNumber"`
 	Amount        float64             `json:"amount"`
 }
 

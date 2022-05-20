@@ -6,18 +6,18 @@ import (
 )
 
 type Account struct {
-	AccountNumber types.AccountNumber `json:"account_number"`
-	CurrencyCode  types.Currency      `json:"currency_code"`
-	OwnerName     string              `json:"owner_name"`
-	AccountType   types.AccountType   `json:"account_type"`
-	Balance       decimal.Decimal     `json:"balance"`
+	AccountNumber types.AccountNumber
+	CurrencyCode  types.Currency
+	OwnerName     string
+	AccountType   types.AccountType
+	Balance       decimal.Decimal
 }
 
 type AccountDTO struct {
-	AccountNumber types.AccountNumber `json:"account_number"`
-	CurrencyCode  types.Currency      `json:"currency_code"`
-	OwnerName     string              `json:"owner_name"`
-	AccountType   types.AccountType   `json:"account_type"`
+	AccountNumber types.AccountNumber `json:"accountNumber"`
+	CurrencyCode  types.Currency      `json:"currencyCode"`
+	OwnerName     string              `json:"ownerName"`
+	AccountType   types.AccountType   `json:"accountType"`
 	Balance       float64             `json:"balance"`
 }
 
