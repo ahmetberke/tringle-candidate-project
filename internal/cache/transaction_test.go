@@ -3,6 +3,7 @@ package cache
 import (
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
 	"github.com/ahmetberke/tringle-candidate-project/internal/types"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -47,7 +48,7 @@ func TestTransactionHistoryCache_Create(t *testing.T) {
 
 		transaction := &models.Transaction{
 			AccountNumber:   accountNumber,
-			Amount:          123,
+			Amount:          decimal.NewFromFloat(123),
 			TransactionType: "payment",
 		}
 
