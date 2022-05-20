@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"github.com/ahmetberke/tringle-candidate-project/internal/cache"
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
 	"github.com/ahmetberke/tringle-candidate-project/internal/types"
 	"github.com/shopspring/decimal"
@@ -20,7 +19,7 @@ type accountCache interface {
 	UpdateBalance(accountNumber types.AccountNumber, balance decimal.Decimal) error
 }
 
-func NewAccountService(cache *cache.AccountCache) *AccountService {
+func NewAccountService(cache accountCache) *AccountService {
 	return &AccountService{Cache: cache}
 }
 
