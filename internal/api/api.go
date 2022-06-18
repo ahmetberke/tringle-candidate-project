@@ -11,6 +11,7 @@ import (
 // this struct has a PORT for custom host setting
 // and it has a router that distributes the routes to the relevant controllers
 // the server is run through this router
+// TODO: Add balance and amount is negative or zero check
 type api struct {
 	PORT   string
 	Router *gin.Engine
