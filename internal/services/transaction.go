@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/ahmetberke/tringle-candidate-project/internal/models"
 	"github.com/ahmetberke/tringle-candidate-project/internal/types"
+	"github.com/shopspring/decimal"
 )
 
 type TransactionService struct {
@@ -26,6 +27,11 @@ func NewTransactionService(ac accountCache,
 }
 
 func (ts *TransactionService) NewPayment(payment *models.Payment) (*models.Transaction, error) {
+
+	if payment.Amount.LessThan(decimal.NewFromInt(0)) {
+		return nil, errors.New("amount must be greater than 0")
+	}
+
 	_, err := ts.transactionCache.GetAll(payment.SenderAccount)
 	if err != nil {
 		_ = ts.transactionCache.AddAccount(payment.SenderAccount)
@@ -74,6 +80,11 @@ func (ts *TransactionService) NewPayment(payment *models.Payment) (*models.Trans
 }
 
 func (ts *TransactionService) NewDeposit(deposit *models.Deposit) (*models.Transaction, error) {
+
+	if deposit.Amount.LessThan(decimal.NewFromInt(0)) {
+		return nil, errors.New("amount must be greater than 0")
+	}
+
 	_, err := ts.transactionCache.GetAll(deposit.AccountNumber)
 	if err != nil {
 		_ = ts.transactionCache.AddAccount(deposit.AccountNumber)
@@ -104,6 +115,11 @@ func (ts *TransactionService) NewDeposit(deposit *models.Deposit) (*models.Trans
 }
 
 func (ts *TransactionService) NewWithdraw(withdraw *models.Withdraw) (*models.Transaction, error) {
+
+	if withdraw.Amount.LessThan(decimal.NewFromInt(0)) {
+		return nil, errors.New("amount must be greater than 0")
+	}
+
 	_, err := ts.transactionCache.GetAll(withdraw.AccountNumber)
 	if err != nil {
 		_ = ts.transactionCache.AddAccount(withdraw.AccountNumber)
